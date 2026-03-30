@@ -12,7 +12,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -47,7 +51,7 @@ import java.util.TimerTask;
 )
 
 @ConfigurationPropertiesScan
-@EnableScheduling
+@EnableAsync
 public class SpringProfilingApplication {
 
     public static void main(String[] args) {
@@ -90,6 +94,45 @@ public class SpringProfilingApplication {
                 registry.addMapping("/**").allowedOrigins("*");
             }
         };
+    }
+
+    @Bean
+    @Profile("dev")
+    public TaskExecutor taskExecutorDev() {
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+
+        taskExecutor.setCorePoolSize(10);
+        taskExecutor.setMaxPoolSize(10);
+        taskExecutor.setKeepAliveSeconds(20);
+        taskExecutor.setQueueCapacity(100);
+        taskExecutor.setThreadNamePrefix("Dev-");
+        return taskExecutor;
+    }
+
+    @Bean
+    @Profile("test")
+    public TaskExecutor taskExecutorTest() {
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+
+        taskExecutor.setCorePoolSize(5);
+        taskExecutor.setMaxPoolSize(10);
+        taskExecutor.setKeepAliveSeconds(10);
+        taskExecutor.setQueueCapacity(20);
+        taskExecutor.setThreadNamePrefix("Test-");
+        return taskExecutor;
+    }
+
+    @Bean
+    @Profile("prod")
+    public TaskExecutor taskExecutorProd() {
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+
+        taskExecutor.setCorePoolSize(10);
+        taskExecutor.setMaxPoolSize(100);
+        taskExecutor.setKeepAliveSeconds(30);
+        taskExecutor.setQueueCapacity(100);
+        taskExecutor.setThreadNamePrefix("Prod-");
+        return taskExecutor;
     }
 
 }

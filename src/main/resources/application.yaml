@@ -1,6 +1,9 @@
 spring:
+  profiles:
+    active: dev
   application:
     name: SpringBoot_properties_yaml_asynchronous_taskScheduling
+
   datasource:
     url: jdbc:h2:mem:testdb
     password: 123
