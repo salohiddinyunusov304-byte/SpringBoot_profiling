@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: SpringBoot_properties_yaml_asynchronous_taskScheduling
+  datasource:
+    url: jdbc:h2:mem:testdb
+    password: 123
+    username: sa
+    driver-class-name: org.h2.Driver
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+
+springdoc:
+  swagger-ui:
+    path=/swagger-ui.html
